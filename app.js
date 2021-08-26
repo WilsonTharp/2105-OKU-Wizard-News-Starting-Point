@@ -70,6 +70,16 @@ app.get('/posts/:id', (req, res) => {
   </html>`);
   });
 
+  app.get('/posts/:id', (req, res) => {
+    const id = req.params.id
+    const post = find(id)
+    if (!post.id) {
+      // If the post wasn't found, just throw an error
+      throw new Error('Not Found')
+    }
+    // ... Otherwise, send the regular post detail HTML
+});
+
 const PORT = 1337;
 
 app.listen(PORT, () => {
