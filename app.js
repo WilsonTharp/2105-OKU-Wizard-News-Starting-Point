@@ -1,7 +1,11 @@
 const express = require("express");
 const postBank = require("./postBank");
+const {postList} = require("./views/postList");
+// const {postDetails} = require("./views/postDetails"); couldn't figure this guy out
 const app = express();
 const morgan = require("morgan");
+var timeAgo = require('node-time-ago');
+var html = require("html-template-tag");
 
 app.use(morgan('dev'));
 
@@ -11,32 +15,7 @@ app.use(express.static('public'));
 
 app.get("/", (req, res) => {
   const posts = postBank.list();
-  console.log(posts)
-  const mappingPost = posts.map(post => 
-    `<div class='news-item'>
-        <p>
-          <span class="news-position">${post.id}. ▲</span><a href="/posts/${post.id}">${post.title}</a>
-          <small>(by ${post.name})</small>
-        </p>
-        <small class="news-info">
-          ${post.upvotes} upvotes | ${post.date}
-        </small>
-      </div>`
-    ).join('')
-
-  res.send(`<!DOCTYPE html>
-  <html>
-  <head>
-    <title>Wizard News</title>
-    <link rel="stylesheet" href="/style.css" />
-  </head>
-  <body>
-    <div class="news-list">
-      <header><img src="/logo.png"/>Wizard News</header>
-      ${mappingPost}
-    </div>
-  </body>
-</html>`)
+  res.send(postList(posts));
   });
 
 app.get('/posts/:id', (req, res) => {
@@ -50,7 +29,7 @@ app.get('/posts/:id', (req, res) => {
         </p>
         <p>
           ${post.content} <br>
-          <small>${post.date}</small>
+          <small>${timeAgo(post.date)}</small>
         </p>
       </div>`
       if (!post.id) {
@@ -74,7 +53,7 @@ app.get('/posts/:id', (req, res) => {
 
   app.use(function (err, req, res, next) {
     console.error(err.stack)
-    res.status(404).send(`<!DOCTYPE html>
+    res.status(404).send(html `<!DOCTYPE html>
     <html>
     <head>
       <title>Wizard News</title>
