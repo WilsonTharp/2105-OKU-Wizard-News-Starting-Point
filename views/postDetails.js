@@ -10,7 +10,7 @@ var html = require("html-template-tag");
 
 const post = postBank.find(req.params.id);
 const singlePostRoute = 
- `<div class='news-item'>
+html `<div class='news-item'>
     <p>
       </span>${post.title}
       <small>(by ${post.name})</small>
